@@ -47,6 +47,23 @@ app.post('/api/notes', async (req, res) => {
     }
 });
 
+app.delete('/api/notes/:id', async (req, res) => {
+    try {
+        const noteId = parseInt(req.params.id);
+        const data = await fs.readFile(path.join(__dirname, 'db/db.json'), 'utf8');
+        let notes = JSON.parse(data);
+
+        notes = notes.filter((note) => note.id !== noteId);
+
+        await fs.writeFile(path.join(__dirname, 'db/db.json'), JSON.stringify(notes));
+
+        res.json({ success:true });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Example app listening at http://localhost:${PORT}`);
 });
